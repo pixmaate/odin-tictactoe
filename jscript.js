@@ -1,4 +1,4 @@
-
+//// GLOBAL SCOPE DECLARATIONS IF ANY /////
 
 
 
@@ -23,13 +23,40 @@ const gameBoard = (function () {
  
 })();
 
+/// The Gameplay Object that controls the game ///
+
 const game = (function () {
     
+    function oneGameRound() {
+        playerOne.makePlay();
+        playerTwo.makePlay();
+    };
 
     function playRound (position, marker) {
         gameBoard.changeBoard(position, marker);
     };
  
-    return {playRound};
+    return {playRound, oneGameRound};
 
 })();
+
+/// The Player Object ///
+
+function createPlayer (name, marker) {
+    const userName = name;
+
+    function makePlay() {
+        playPosition = prompt("Please pick");
+        game.playRound(playPosition, marker);
+    };
+
+    return {name, makePlay};
+};
+
+///// MAIN CODE AREA ////
+
+playerOne = createPlayer('One', 'X');
+playerTwo = createPlayer('Two', 'O');
+
+game.oneGameRound();
+gameBoard.checkBoard();
