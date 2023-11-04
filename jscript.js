@@ -21,6 +21,20 @@ const gameBoard = (function () {
 
     function changeBoard(position, marker) {
         playBoard[position] = marker;
+        drawBoard();
+    };
+
+    function drawBoard() {
+        const gameArea = document.querySelector('.gameBoardArea');
+        gameArea.innerHTML = '';
+
+        playBoard.forEach((el) =>{
+            const gameTile = document.createElement('div');
+
+            (el === 'X' || el === 'O') ? gameTile.textContent = el : gameTile.textContent = null;
+            gameTile.classList.add('oneTile');
+            gameArea.appendChild(gameTile);
+        });
     };
 
     /// CheckWin function -- maybe refactored later
@@ -103,10 +117,8 @@ const game = (function () {
     let gameOn = '';
 
     function oneGameRound() {
-        playerOne.makePlay();
-        game.gameOn = gameBoard.checkWin();
+        playerOne.makePlay();     
         playerTwo.makePlay();
-        game.gameOn = gameBoard.checkWin();
     };
 
     function playRound (position, marker) {
@@ -132,6 +144,7 @@ function createPlayer (name, marker) {
 
         playPosition = prompt("Please pick");
         game.playRound(playPosition, marker);
+        game.gameOn = gameBoard.checkWin();
     };
 
     return {name, makePlay};

@@ -1,0 +1,22 @@
+:root {
+    font-size: 12px;
+}
+
+
+.gameBoardArea {
+    height: 640px;
+    width: 640px;
+    border: solid;
+
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.oneTile {
+    border: solid;
+    border-width: 2px;
+    font-size: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
