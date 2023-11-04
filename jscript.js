@@ -85,7 +85,14 @@ const gameBoard = (function () {
         return true;
     };
 
-    return {checkBoard, changeBoard, checkWin, makePlayBoard};
+    function illegalPlay(position) {
+        if (playBoard[position] === 'X' || playBoard[position] === 'Y') {
+            return true;
+        };
+        return false;
+    };
+
+    return {checkBoard, changeBoard, checkWin, makePlayBoard, illegalPlay};
  
 })();
 
@@ -103,7 +110,12 @@ const game = (function () {
     };
 
     function playRound (position, marker) {
-        gameBoard.changeBoard(position, marker);
+        if (gameBoard.illegalPlay(position)) {
+            (marker === 'X') ? playerOne.makePlay() : playerTwo.makePlay();
+        }
+        else {
+            gameBoard.changeBoard(position, marker);
+        };        
     };
 
  
@@ -117,6 +129,7 @@ function createPlayer (name, marker) {
     const userName = name;
 
     function makePlay() {
+
         playPosition = prompt("Please pick");
         game.playRound(playPosition, marker);
     };
