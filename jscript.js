@@ -12,6 +12,7 @@ const gameBoard = (function () {
         for (i=0;i<9;i++) {
             playBoard[i] = 0;
         };
+        drawBoard()
     }
     
 
@@ -27,11 +28,24 @@ const gameBoard = (function () {
     function drawBoard() {
         const gameArea = document.querySelector('.gameBoardArea');
         gameArea.innerHTML = '';
+        let arrayIndex = 0;
 
         playBoard.forEach((el) =>{
             const gameTile = document.createElement('div');
 
+            gameTile.id = arrayIndex;
+            arrayIndex += 1;
+
             (el === 'X' || el === 'O') ? gameTile.textContent = el : gameTile.textContent = null;
+
+
+            if (checkWin() === true) {
+                gameTile.addEventListener('click', (event) => {
+                    (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
+                });
+            };
+            
+
             gameTile.classList.add('oneTile');
             gameArea.appendChild(gameTile);
         });
@@ -106,7 +120,7 @@ const gameBoard = (function () {
         return false;
     };
 
-    return {checkBoard, changeBoard, checkWin, makePlayBoard, illegalPlay};
+    return {checkBoard, changeBoard, checkWin, makePlayBoard, illegalPlay, drawBoard};
  
 })();
 
@@ -115,6 +129,7 @@ const gameBoard = (function () {
 const game = (function () {
 
     let gameOn = '';
+    let lastPlayer = 'O';
 
     function oneGameRound() {
         playerOne.makePlay();     
@@ -127,11 +142,12 @@ const game = (function () {
         }
         else {
             gameBoard.changeBoard(position, marker);
-        };        
+        };
+        game.lastPlayer = marker;  
     };
 
  
-    return {oneGameRound, playRound, gameOn};
+    return {oneGameRound, playRound, gameOn, lastPlayer};
 
 })();
 
@@ -140,9 +156,8 @@ const game = (function () {
 function createPlayer (name, marker) {
     const userName = name;
 
-    function makePlay() {
+    function makePlay(playPosition) {
 
-        playPosition = prompt("Please pick");
         game.playRound(playPosition, marker);
         game.gameOn = gameBoard.checkWin();
     };
@@ -157,10 +172,10 @@ playerTwo = createPlayer('Two', 'O');
 
 gameBoard.makePlayBoard()
 
-do {
-    game.oneGameRound();
-    gameBoard.checkBoard();   
-} while (game.gameOn);
+//do {
+//    game.oneGameRound();
+//    gameBoard.checkBoard();   
+//} while (game.gameOn);
 
 
 
