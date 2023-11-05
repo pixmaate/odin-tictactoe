@@ -41,7 +41,12 @@ const gameBoard = (function () {
 
             if (checkWin() === true) {
                 gameTile.addEventListener('click', (event) => {
-                    (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
+                    if (playerTwo.isAI()) {
+                        (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makeAIPlay();
+                    }
+                    else {
+                        (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
+                    };                    
                 });
             };
             
@@ -165,10 +170,27 @@ function createPlayer (name, marker) {
     return {name, makePlay};
 };
 
+//// The AI Object ///
+
+function createAI (AIname,AImarker) {
+    const {name, makePlay} = createPlayer(AIname, AImarker);
+
+    function makeAIPlay () {
+        let AIPosition = Math.floor(Math.random() * 9);
+        makePlay(AIPosition);
+    };
+
+    function isAI() {
+        return true
+    };
+
+    return {name, makeAIPlay, isAI}
+}
+
 ///// MAIN CODE AREA ////
 
 playerOne = createPlayer('One', 'X');
-playerTwo = createPlayer('Two', 'O');
+playerTwo = createAI('Two', 'O');
 
 gameBoard.makePlayBoard()
 
