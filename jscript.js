@@ -20,6 +20,7 @@ const gameBoard = (function () {
         console.log(playBoard);
     };
 
+
     function changeBoard(position, marker) {
         playBoard[position] = marker;
         game.gameOn = gameBoard.checkWin();
@@ -40,12 +41,12 @@ const gameBoard = (function () {
             (el === 'X' || el === 'O') ? gameTile.textContent = el : gameTile.textContent = null;
 
 
-            if (game.gameOn === true) {
+            if (game.gameOn === 'ON') {
                 if (el === 0) {
                     gameTile.addEventListener('click', (event) => {
                         console.log('gameClick');
                         (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
-                        if (game.gameOn === true) {
+                        if (game.gameOn === 'ON') {
                             (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';
                         };                        
                     });       
@@ -68,58 +69,58 @@ const gameBoard = (function () {
         console.log(result.length);
 
         if (playBoard[0] === 'X' && playBoard[1] === 'X' && playBoard[2] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[0] === 'O' && playBoard[1] === 'O' && playBoard[2] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[3] === 'X' && playBoard[4] === 'X' && playBoard[5] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[3] === 'O' && playBoard[4] === 'O' && playBoard[5] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[6] === 'X' && playBoard[7] === 'X' && playBoard[8] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[6] === 'O' && playBoard[7] === 'O' && playBoard[8] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[0] === 'X' && playBoard[3] === 'X' && playBoard[6] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[0] === 'O' && playBoard[3] === 'O' && playBoard[6] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[1] === 'X' && playBoard[4] === 'X' && playBoard[7] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[1] === 'O' && playBoard[4] === 'O' && playBoard[7] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[2] === 'X' && playBoard[5] === 'X' && playBoard[8] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[2] === 'O' && playBoard[5] === 'O' && playBoard[8] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[0] === 'X' && playBoard[4] === 'X' && playBoard[8] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[0] === 'O' && playBoard[4] === 'O' && playBoard[8] === 'O') {
-            return false;
+            return 'O';
         }
         else if (playBoard[2] === 'X' && playBoard[4] === 'X' && playBoard[6] === 'X') {
-            return false;
+            return 'X';
         }
         else if (playBoard[2] === 'O' && playBoard[4] === 'O' && playBoard[6] === 'O') {
-            return false;
+            return 'O';
         }
         else if (result.length === 0) {
-            return false;
+            return 'DRAW';
         };
 
-        return true;
+        return 'ON';
     };
 
     function illegalPlay(position) {
@@ -130,7 +131,7 @@ const gameBoard = (function () {
         return false;
     };
 
-    return {checkBoard, changeBoard, checkWin, makePlayBoard, illegalPlay, drawBoard};
+    return {playBoard, checkBoard, changeBoard, checkWin, makePlayBoard, illegalPlay, drawBoard};
  
 })();
 
@@ -138,7 +139,7 @@ const gameBoard = (function () {
 
 const game = (function () {
 
-    let gameOn = true;
+    let gameOn = 'ON';
     let lastPlayer = 'O';
 
     function playRound (position, marker) {
@@ -183,6 +184,9 @@ function createAI (AIname,AImarker, AIDifficulty) {
     function makeAIPlay () {
         if (AIDifficulty === 'Easy') {
             makeRandomPlay();
+        }
+        else {
+            makeMiniMaxPlay();
         };
         
     };
@@ -192,7 +196,69 @@ function createAI (AIname,AImarker, AIDifficulty) {
             makePlay(AIPosition);
     };
 
+    /// basic MiniMax for Moderate AI
+
     function makeMiniMaxPlay() {
+        const originalBoard = gameBoard.playBoard
+        const miniMaxScore = [];
+        let arrayIndex = 0;
+        let optimalAIPosition = 9;
+        let isWin = 0;
+
+        console.log(originalBoard);
+
+        for (i=0;i<9;i++) {
+            miniMaxScore[i] = 'Occupied';
+        };
+
+
+        gameBoard.playBoard.forEach((el) => {
+            if (el===0) {
+
+                gameBoard.playBoard[arrayIndex] = 'O';
+                let whoWon = gameBoard.checkWin();
+                gameBoard.playBoard[arrayIndex] = 0;
+                if (whoWon === 'O') {
+                    miniMaxScore[arrayIndex] = 10;
+                }
+                else {
+                    miniMaxScore[arrayIndex] = 0;
+                };
+
+                gameBoard.playBoard[arrayIndex] = 'X';
+                whoWon = gameBoard.checkWin();
+                gameBoard.playBoard[arrayIndex] = 0;
+                if (whoWon === 'X') {
+                    miniMaxScore[arrayIndex] = '-10';
+                };
+                
+                
+            };
+            arrayIndex += 1;
+        });
+
+        arrayIndex = 0;
+
+        gameBoard.playBoard = originalBoard;
+        console.log(miniMaxScore);
+
+        miniMaxScore.forEach((el) =>{
+            if (el==10) {
+                optimalAIPosition = arrayIndex;
+                isWin = 1;
+            }
+            else if (el == '-10') {
+                (isWin == 1) ? '' : optimalAIPosition = arrayIndex;
+            }
+            else if (el==0) {
+                (optimalAIPosition == 9) ? optimalAIPosition = arrayIndex : '';
+            };
+            console.log(arrayIndex);
+            arrayIndex += 1;
+        });
+
+        console.log(`I want to play ${optimalAIPosition}`);
+        (optimalAIPosition == 9) ? makeRandomPlay() : makePlay(optimalAIPosition);
 
     };
 
@@ -206,7 +272,7 @@ function createAI (AIname,AImarker, AIDifficulty) {
 ///// MAIN CODE AREA ////
 
 playerOne = createPlayer('One', 'X');
-playerTwo = createAI('Two', 'O', 'Easy');
+playerTwo = createAI('Two', 'O', 'aEasy');
 
 gameBoard.makePlayBoard()
 
