@@ -182,10 +182,18 @@ function createAI (AIname,AImarker, AIDifficulty) {
 
     function makeAIPlay () {
         if (AIDifficulty === 'Easy') {
-            let AIPosition = Math.floor(Math.random() * 9);
-            makePlay(AIPosition);
+            makeRandomPlay();
         };
         
+    };
+
+    function makeRandomPlay() {
+        let AIPosition = Math.floor(Math.random() * 9);
+            makePlay(AIPosition);
+    };
+
+    function makeMiniMaxPlay() {
+
     };
 
     function isAI() {
