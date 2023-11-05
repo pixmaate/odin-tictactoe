@@ -179,6 +179,8 @@ function createPlayer (name, marker) {
 
 function createAI (AIname,AImarker, AIDifficulty) {
     const {name, makePlay} = createPlayer(AIname, AImarker);
+    const miniMaxScore = [];
+
 
 
     function makeAIPlay () {
@@ -200,7 +202,6 @@ function createAI (AIname,AImarker, AIDifficulty) {
 
     function makeMiniMaxPlay() {
         const originalBoard = gameBoard.playBoard
-        const miniMaxScore = [];
         let arrayIndex = 0;
         let optimalAIPosition = 9;
         let isWin = 0;
@@ -211,31 +212,8 @@ function createAI (AIname,AImarker, AIDifficulty) {
             miniMaxScore[i] = 'Occupied';
         };
 
-
-        gameBoard.playBoard.forEach((el) => {
-            if (el===0) {
-
-                gameBoard.playBoard[arrayIndex] = 'O';
-                let whoWon = gameBoard.checkWin();
-                gameBoard.playBoard[arrayIndex] = 0;
-                if (whoWon === 'O') {
-                    miniMaxScore[arrayIndex] = 10;
-                }
-                else {
-                    miniMaxScore[arrayIndex] = 0;
-                };
-
-                gameBoard.playBoard[arrayIndex] = 'X';
-                whoWon = gameBoard.checkWin();
-                gameBoard.playBoard[arrayIndex] = 0;
-                if (whoWon === 'X') {
-                    miniMaxScore[arrayIndex] = '-10';
-                };
-                
-                
-            };
-            arrayIndex += 1;
-        });
+        oneMiniMaxLoop(originalBoard);
+        
 
         arrayIndex = 0;
 
@@ -260,6 +238,34 @@ function createAI (AIname,AImarker, AIDifficulty) {
         console.log(`I want to play ${optimalAIPosition}`);
         (optimalAIPosition == 9) ? makeRandomPlay() : makePlay(optimalAIPosition);
 
+    };
+
+    function oneMiniMaxLoop(originalBoard) {
+        let arrayIndex = 0;
+        gameBoard.playBoard.forEach((el) => {
+            if (el===0) {
+
+                gameBoard.playBoard[arrayIndex] = 'O';
+                let whoWon = gameBoard.checkWin();
+                if (whoWon === 'O') {
+                    miniMaxScore[arrayIndex] = 10;
+                }
+                else {
+                    miniMaxScore[arrayIndex] = 0;
+                };
+
+                gameBoard.playBoard[arrayIndex] = 'X';
+                whoWon = gameBoard.checkWin();
+                gameBoard.playBoard[arrayIndex] = 0;
+                if (whoWon === 'X') {
+                    miniMaxScore[arrayIndex] = '-10';
+                };
+                
+                
+            };
+            gameBoard.playBoard = originalBoard;
+            arrayIndex += 1;
+        });
     };
 
     function isAI() {
