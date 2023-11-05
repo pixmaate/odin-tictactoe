@@ -39,14 +39,10 @@ const gameBoard = (function () {
             (el === 'X' || el === 'O') ? gameTile.textContent = el : gameTile.textContent = null;
 
 
-            if (checkWin() === true) {
+            if (game.gameOn === true) {
                 gameTile.addEventListener('click', (event) => {
-                    if (playerTwo.isAI()) {
-                        (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makeAIPlay();
-                    }
-                    else {
-                        (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
-                    };                    
+                    (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
+                    (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';                  
                 });
             };
             
@@ -133,7 +129,7 @@ const gameBoard = (function () {
 
 const game = (function () {
 
-    let gameOn = '';
+    let gameOn = true;
     let lastPlayer = 'O';
 
     function oneGameRound() {
@@ -143,7 +139,12 @@ const game = (function () {
 
     function playRound (position, marker) {
         if (gameBoard.illegalPlay(position)) {
-            (marker === 'X') ? playerOne.makePlay() : playerTwo.makePlay();
+            if (playerTwo.isAI()) {
+                (marker === 'X') ? playerOne.makePlay() : playerTwo.makeAIPlay();
+            }
+            else {
+                (marker === 'X') ? playerOne.makePlay() : playerTwo.makePlay();
+            };            
         }
         else {
             gameBoard.changeBoard(position, marker);
@@ -167,7 +168,11 @@ function createPlayer (name, marker) {
         game.gameOn = gameBoard.checkWin();
     };
 
-    return {name, makePlay};
+    function isAI() {
+        return false;
+    }
+
+    return {name, makePlay, isAI};
 };
 
 //// The AI Object ///
