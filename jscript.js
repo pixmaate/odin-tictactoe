@@ -45,7 +45,9 @@ const gameBoard = (function () {
                     gameTile.addEventListener('click', (event) => {
                         console.log('gameClick');
                         (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
-                        (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';
+                        if (game.gameOn === true) {
+                            (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';
+                        };                        
                     });       
                 };
                            
@@ -63,7 +65,7 @@ const gameBoard = (function () {
     function checkWin() {
 
         let result = playBoard.filter((item) => item == '0');
-        console.log(result);
+        console.log(result.length);
 
         if (playBoard[0] === 'X' && playBoard[1] === 'X' && playBoard[2] === 'X') {
             return false;
@@ -162,7 +164,6 @@ function createPlayer (name, marker) {
     const userName = name;
 
     function makePlay(playPosition) {
-
         game.playRound(playPosition, marker);
     };
 
@@ -175,12 +176,16 @@ function createPlayer (name, marker) {
 
 //// The AI Object ///
 
-function createAI (AIname,AImarker) {
+function createAI (AIname,AImarker, AIDifficulty) {
     const {name, makePlay} = createPlayer(AIname, AImarker);
 
+
     function makeAIPlay () {
-        let AIPosition = Math.floor(Math.random() * 9);
-        makePlay(AIPosition);
+        if (AIDifficulty === 'Easy') {
+            let AIPosition = Math.floor(Math.random() * 9);
+            makePlay(AIPosition);
+        };
+        
     };
 
     function isAI() {
@@ -193,7 +198,7 @@ function createAI (AIname,AImarker) {
 ///// MAIN CODE AREA ////
 
 playerOne = createPlayer('One', 'X');
-playerTwo = createAI('Two', 'O');
+playerTwo = createAI('Two', 'O', 'Easy');
 
 gameBoard.makePlayBoard()
 
