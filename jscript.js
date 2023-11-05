@@ -2,16 +2,49 @@
 
 
 
-
 /// The Gameboard Object ////
 
 const gameBoard = (function () {
+    const startButton = document.querySelector('#start');
+    const playerButton = document.querySelector('#vsPlayer');
+    const AIButton = document.querySelector('#vsAI');
     const playBoard = [];
 
+    playerButton.addEventListener('click', (event) => {
+        playerButton.classList.add('selected');
+        AIButton.classList.remove('selected');
+    });
+
+    AIButton.addEventListener('click', (event) => {
+        playerButton.classList.remove('selected');
+        AIButton.classList.add('selected');
+    });
+
+    startButton.addEventListener('click', (event) =>{
+        playerOne = null;
+        playerTwo = null;
+
+        if (AIButton.classList == 'selected') {
+            playerOne = createPlayer('One', 'X');
+            playerTwo = createAI('Two', 'O', 'aEasy');
+            makePlayBoard();
+        }
+        else {
+            playerOne = createPlayer('One', 'X');
+            playerTwo = createPlayer('Two', 'O',);
+            makePlayBoard();
+        }
+    
+        
+    });
+
     function makePlayBoard() {
+
         for (i=0;i<9;i++) {
             playBoard[i] = 0;
         };
+
+
         drawBoard()
     }
     
@@ -242,24 +275,70 @@ function createAI (AIname,AImarker, AIDifficulty) {
 
     function oneMiniMaxLoop(originalBoard) {
         let arrayIndex = 0;
+        let stackLastPalyer = game.lastPlayer
         gameBoard.playBoard.forEach((el) => {
             if (el===0) {
 
-                gameBoard.playBoard[arrayIndex] = 'O';
-                let whoWon = gameBoard.checkWin();
-                if (whoWon === 'O') {
-                    miniMaxScore[arrayIndex] = 10;
-                }
-                else {
-                    miniMaxScore[arrayIndex] = 0;
-                };
+                if (stackLastPlyer = 'X') {
+                    gameBoard.playBoard[arrayIndex] = 'O';
+                    let whoWon = gameBoard.checkWin();
+                    if (whoWon === 'O') {
+                        miniMaxScore[arrayIndex] = 10;
+                    }
+                    else {
+                        miniMaxScore[arrayIndex] = 0;
+                    };
 
-                gameBoard.playBoard[arrayIndex] = 'X';
-                whoWon = gameBoard.checkWin();
-                gameBoard.playBoard[arrayIndex] = 0;
-                if (whoWon === 'X') {
-                    miniMaxScore[arrayIndex] = '-10';
+                    gameBoard.playBoard[arrayIndex] = 'X';
+                    whoWon = gameBoard.checkWin();
+                    gameBoard.playBoard[arrayIndex] = 0;
+                    if (whoWon === 'X') {
+                        miniMaxScore[arrayIndex] = '-10';
+                    };
                 };
+                
+                
+                
+            };
+            gameBoard.playBoard = originalBoard;
+            arrayIndex += 1;
+        });
+    };
+
+    function fullMiniMaxLoop(originalBoard) {
+        let arrayIndex = 0;
+        let stackLastPlayer = game.lastPlayer
+        gameBoard.playBoard.forEach((el) => {
+            if (el===0) {
+
+                if (stackLastPlayer = 'X') {
+
+                    gameBoard.playBoard[arrayIndex] = 'O';
+                    stackLastPlayer = 'O';
+                    let whoWon = gameBoard.checkWin();
+                    if (whoWon === 'O') {
+                        miniMaxScore[arrayIndex] = 10;
+                    }
+                    else {
+                        (gameBoard.playBoard.length == 0) ? miniMaxScore[arrayIndex] = 0 :fullMiniMaxLoop(originalBoard);
+                        
+                    };
+
+                    
+                }
+                else if (stackLastPlayer = 'O') {
+                    gameBoard.playBoard[arrayIndex] = 'X';
+                    stackLastPlayer = 'X';
+                    whoWon = gameBoard.checkWin();
+                    gameBoard.playBoard[arrayIndex] = 0;
+                    if (whoWon === 'X') {
+                        miniMaxScore[arrayIndex] = '-10';
+                    }
+                    else {
+                        (gameBoard.playBoard.length == 0) ? miniMaxScore[arrayIndex] = 0 :fullMiniMaxLoop(originalBoard);
+                    };
+                };
+                
                 
                 
             };
@@ -277,10 +356,9 @@ function createAI (AIname,AImarker, AIDifficulty) {
 
 ///// MAIN CODE AREA ////
 
-playerOne = createPlayer('One', 'X');
-playerTwo = createAI('Two', 'O', 'aEasy');
 
-gameBoard.makePlayBoard()
+
+//gameBoard.makePlayBoard()
 
 
 

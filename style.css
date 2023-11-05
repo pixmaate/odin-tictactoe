@@ -2,6 +2,18 @@
     font-size: 12px;
 }
 
+.mainWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.selected {
+    background-color: aquamarine;
+}
+
 
 .gameBoardArea {
     height: 640px;
