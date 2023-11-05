@@ -2,7 +2,8 @@
     font-size: 12px;
 }
 
-.mainWrapper {
+.mainWrapper,
+.controlsWrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -12,6 +13,18 @@
 
 .selected {
     background-color: aquamarine;
+}
+
+.topControls,
+.bottomControls {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+button  {
+    width: 10rem;
+    border-radius: 10px;
 }
 
 

@@ -23,6 +23,7 @@ const gameBoard = (function () {
     startButton.addEventListener('click', (event) =>{
         playerOne = null;
         playerTwo = null;
+        game.gameOn = 'ON';
 
         if (AIButton.classList == 'selected') {
             playerOne = createPlayer('One', 'X');
@@ -43,8 +44,6 @@ const gameBoard = (function () {
         for (i=0;i<9;i++) {
             playBoard[i] = 0;
         };
-
-
         drawBoard()
     }
     
