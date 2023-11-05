@@ -22,6 +22,7 @@ const gameBoard = (function () {
 
     function changeBoard(position, marker) {
         playBoard[position] = marker;
+        game.gameOn = gameBoard.checkWin();
         drawBoard();
     };
 
@@ -40,10 +41,15 @@ const gameBoard = (function () {
 
 
             if (game.gameOn === true) {
-                gameTile.addEventListener('click', (event) => {
-                    (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
-                    (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';                  
-                });
+                if (el === 0) {
+                    gameTile.addEventListener('click', (event) => {
+                        console.log('gameClick');
+                        (game.lastPlayer === 'O') ? playerOne.makePlay(event.target.id) : playerTwo.makePlay(event.target.id);
+                        (playerTwo.isAI()) ? playerTwo.makeAIPlay(): '';
+                    });       
+                };
+                           
+
             };
             
 
@@ -115,7 +121,8 @@ const gameBoard = (function () {
     };
 
     function illegalPlay(position) {
-        if (playBoard[position] === 'X' || playBoard[position] === 'Y') {
+        if (playBoard[position] === 'X' || playBoard[position] === 'O') {
+            console.log(game.lastPlayer);
             return true;
         };
         return false;
@@ -132,28 +139,20 @@ const game = (function () {
     let gameOn = true;
     let lastPlayer = 'O';
 
-    function oneGameRound() {
-        playerOne.makePlay();     
-        playerTwo.makePlay();
-    };
-
     function playRound (position, marker) {
         if (gameBoard.illegalPlay(position)) {
             if (playerTwo.isAI()) {
-                (marker === 'X') ? playerOne.makePlay() : playerTwo.makeAIPlay();
-            }
-            else {
-                (marker === 'X') ? playerOne.makePlay() : playerTwo.makePlay();
-            };            
+                (game.lastPlayer = 'X') ? playerTwo.makeAIPlay(): '';
+            };           
         }
         else {
             gameBoard.changeBoard(position, marker);
-        };
-        game.lastPlayer = marker;  
+            game.lastPlayer = marker;  
+        };        
     };
 
  
-    return {oneGameRound, playRound, gameOn, lastPlayer};
+    return {playRound, gameOn, lastPlayer};
 
 })();
 
@@ -165,7 +164,6 @@ function createPlayer (name, marker) {
     function makePlay(playPosition) {
 
         game.playRound(playPosition, marker);
-        game.gameOn = gameBoard.checkWin();
     };
 
     function isAI() {
@@ -189,8 +187,8 @@ function createAI (AIname,AImarker) {
         return true
     };
 
-    return {name, makeAIPlay, isAI}
-}
+    return {name, makeAIPlay, isAI};
+};
 
 ///// MAIN CODE AREA ////
 
@@ -199,10 +197,6 @@ playerTwo = createAI('Two', 'O');
 
 gameBoard.makePlayBoard()
 
-//do {
-//    game.oneGameRound();
-//    gameBoard.checkBoard();   
-//} while (game.gameOn);
 
 
 
