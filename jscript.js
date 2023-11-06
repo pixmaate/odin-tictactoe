@@ -8,16 +8,47 @@ const gameBoard = (function () {
     const startButton = document.querySelector('#start');
     const playerButton = document.querySelector('#vsPlayer');
     const AIButton = document.querySelector('#vsAI');
+
+    const easyButton = document.querySelector('#Easy');
+    const smartButton = document.querySelector('#Smart');
+    const unbeatableButton = document.querySelector('#Unbeatable');
+
     const playBoard = [];
+
+    easyButton.addEventListener('click', (event) => {
+        easyButton.classList.add('selected');
+        smartButton.classList.remove('selected');
+        unbeatableButton.classList.remove('selected'); 
+    });
+
+    smartButton.addEventListener('click', (event) => {
+        easyButton.classList.remove('selected');
+        smartButton.classList.add('selected');
+        unbeatableButton.classList.remove('selected'); 
+    });
+
+    unbeatableButton.addEventListener('click', (event) => {
+        easyButton.classList.remove('selected');
+        smartButton.classList.remove('selected');
+        unbeatableButton.classList.add('selected'); 
+    });
+
+    
 
     playerButton.addEventListener('click', (event) => {
         playerButton.classList.add('selected');
         AIButton.classList.remove('selected');
+        easyButton.disabled = true;
+        smartButton.disabled = true;
+        unbeatableButton.disabled = true; 
     });
 
     AIButton.addEventListener('click', (event) => {
         playerButton.classList.remove('selected');
         AIButton.classList.add('selected');
+        easyButton.disabled = false;
+        smartButton.disabled = false;
+        unbeatableButton.disabled = false; 
     });
 
     startButton.addEventListener('click', (event) =>{
@@ -27,7 +58,16 @@ const gameBoard = (function () {
 
         if (AIButton.classList == 'selected') {
             playerOne = createPlayer('One', 'X');
-            playerTwo = createAI('Two', 'O', 'aEasy');
+            if (easyButton.classList == 'selected') {
+                playerTwo = createAI('Two', 'O', 'Easy');
+            }
+            else if (smartButton.classList == 'selected') {
+                playerTwo = createAI('Two', 'O', 'Smart');
+            }
+            else if (unbeatableButton.classList == 'selected') {
+                playerTwo = createAI('Two', 'O', 'Unbeatable');
+            };
+            
             makePlayBoard();
         }
         else {
@@ -44,6 +84,7 @@ const gameBoard = (function () {
         for (i=0;i<9;i++) {
             playBoard[i] = 0;
         };
+        game.lastPlayer = 'O';
         drawBoard()
     }
     
@@ -267,6 +308,17 @@ function createAI (AIname,AImarker, AIDifficulty) {
             arrayIndex += 1;
         });
 
+        if (miniMaxScore[4] != 'Occupied' && AIDifficulty == 'Unbeatable') {
+            let firstRound = miniMaxScore.filter((item) => item == 'Occupied');
+            (firstRound.length == 1) ? optimalAIPosition = 4 : '';
+        }
+        else {
+            let firstRound = miniMaxScore.filter((item) => item == 'Occupied');
+            (firstRound.length == 1) ? optimalAIPosition = 9 : '';
+        }
+
+        
+        
         console.log(`I want to play ${optimalAIPosition}`);
         (optimalAIPosition == 9) ? makeRandomPlay() : makePlay(optimalAIPosition);
 
@@ -292,7 +344,7 @@ function createAI (AIname,AImarker, AIDifficulty) {
                     whoWon = gameBoard.checkWin();
                     gameBoard.playBoard[arrayIndex] = 0;
                     if (whoWon === 'X') {
-                        miniMaxScore[arrayIndex] = '-10';
+                        (miniMaxScore[arrayIndex] == 10) ? '' : miniMaxScore[arrayIndex] = '-10';
                     };
                 };
                 
@@ -304,47 +356,7 @@ function createAI (AIname,AImarker, AIDifficulty) {
         });
     };
 
-    function fullMiniMaxLoop(originalBoard) {
-        let arrayIndex = 0;
-        let stackLastPlayer = game.lastPlayer
-        gameBoard.playBoard.forEach((el) => {
-            if (el===0) {
-
-                if (stackLastPlayer = 'X') {
-
-                    gameBoard.playBoard[arrayIndex] = 'O';
-                    stackLastPlayer = 'O';
-                    let whoWon = gameBoard.checkWin();
-                    if (whoWon === 'O') {
-                        miniMaxScore[arrayIndex] = 10;
-                    }
-                    else {
-                        (gameBoard.playBoard.length == 0) ? miniMaxScore[arrayIndex] = 0 :fullMiniMaxLoop(originalBoard);
-                        
-                    };
-
-                    
-                }
-                else if (stackLastPlayer = 'O') {
-                    gameBoard.playBoard[arrayIndex] = 'X';
-                    stackLastPlayer = 'X';
-                    whoWon = gameBoard.checkWin();
-                    gameBoard.playBoard[arrayIndex] = 0;
-                    if (whoWon === 'X') {
-                        miniMaxScore[arrayIndex] = '-10';
-                    }
-                    else {
-                        (gameBoard.playBoard.length == 0) ? miniMaxScore[arrayIndex] = 0 :fullMiniMaxLoop(originalBoard);
-                    };
-                };
-                
-                
-                
-            };
-            gameBoard.playBoard = originalBoard;
-            arrayIndex += 1;
-        });
-    };
+    
 
     function isAI() {
         return true
