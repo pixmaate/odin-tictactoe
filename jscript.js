@@ -52,6 +52,7 @@ const gameBoard = (function () {
     });
 
     startButton.addEventListener('click', (event) =>{
+        const victoryExists = document.querySelector('#victory');
         playerOne = null;
         playerTwo = null;
         game.gameOn = 'ON';
@@ -74,7 +75,11 @@ const gameBoard = (function () {
             playerOne = createPlayer('One', 'X');
             playerTwo = createPlayer('Two', 'O',);
             makePlayBoard();
-        }
+        };
+
+        if (victoryExists) {
+            victoryExists.parentNode.removeChild(victoryExists);
+        };
     
         
     });
@@ -98,6 +103,19 @@ const gameBoard = (function () {
         playBoard[position] = marker;
         game.gameOn = gameBoard.checkWin();
         drawBoard();
+        (game.gameOn != 'ON') ? gameEnded(game.gameOn) : '';
+    };
+
+    function gameEnded(playerVictorious) {
+        const buttonElements = document.querySelector('.controlsWrapper');
+        const winningDiv = document.createElement('div');
+        const winningText = document.createElement('p');
+
+        (playerVictorious == 'DRAW') ? winningText.textContent = 'The game ended in a DRAW!' : winningText.textContent = `The game ended with the victory of ${playerVictorious}`;
+        winningDiv.appendChild(winningText);
+        winningDiv.id = 'victory';
+        buttonElements.after(winningDiv);
+
     };
 
     function drawBoard() {

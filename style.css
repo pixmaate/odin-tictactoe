@@ -11,6 +11,12 @@
     gap: 2rem;
 }
 
+#victory p {
+    font-size: 1.5rem;
+    color:brown;
+    margin: 0.2rem;
+}
+
 .selected {
     background-color: aquamarine;
 }
